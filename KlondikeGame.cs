@@ -44,6 +44,18 @@ namespace klondike
                     cardMappingTables[i].columnNumber = i;
                 }
 
+                AttachDragEventsToCardMapping(cardMappingHearts, false);
+                AttachDragEventsToCardMapping(cardMappingDiamonds, false);
+                AttachDragEventsToCardMapping(cardMappingClubs, false);
+                AttachDragEventsToCardMapping(cardMappingSpades, false);
+                AttachDragEventsToCardMapping(cardMappingUnused, false);
+                AttachDragEventsToCardMapping(cardMappingStack);
+
+                for (int i = 0; i < cardMappingTables.Count; i++)
+                {
+                    AttachDragEventsToCardMapping(cardMappingTables[i], false);
+                }
+
             }
         }
 
@@ -74,7 +86,7 @@ namespace klondike
                     {
                         columnNumber = i
                     };
-
+                    AttachDragEventsToCardMapping(cardMapping);
                     Tables[i].Add(cardMapping);
                 }
             }
@@ -88,6 +100,7 @@ namespace klondike
             {
                 Card card = deck.Pop();
                 CardMapping cardMapping = new CardMapping(card.Type, CardPlacement.Stack);
+                AttachDragEventsToCardMapping(cardMapping);
                 Stack.Add(cardMapping);
             }
         }
@@ -131,6 +144,147 @@ namespace klondike
         {
             cardMapping.card.CloseCard();
             cardMapping.Image = Properties.Resources.Back;
+        }
+
+        private void AttachDragEventsToCardMapping(CardMapping cardMapping, bool withMouseEvents = true)
+        {
+            cardMapping.AllowDrop = true;
+            cardMapping.DragEnter += new DragEventHandler(cardMapping_DragEnter);
+            cardMapping.DragDrop += new DragEventHandler(cardMapping_DragDrop);
+            if (withMouseEvents)
+            {
+                cardMapping.MouseDown += new MouseEventHandler(cardMapping_MouseDown);
+            }
+        }
+
+        private void cardMapping_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetData(typeof(CardMapping)) != null)
+                e.Effect = DragDropEffects.Move;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+        private void cardMapping_MouseDown(object sender, MouseEventArgs e)
+        {
+            CardMapping cardM = ((CardMapping)sender);
+
+            switch (cardM.card.Placement)
+            {
+                case CardPlacement.Stack:
+                    break;
+                default:
+                    if (cardM.card.isOpened())
+                    {
+                        cardM.DoDragDrop(cardM, DragDropEffects.Move);
+                    }
+                    break;
+            }
+        }
+        private void cardMapping_DragDrop(object sender, DragEventArgs e)
+        {
+            CardMapping destinationCard = (CardMapping)sender;
+            CardMapping sourceCard = (CardMapping)e.Data.GetData(typeof(CardMapping));
+
+            switch (sourceCard.card.Placement)
+            {
+                case CardPlacement.Stack:
+                    break;
+                case CardPlacement.Drop:
+                    break;
+                case CardPlacement.Table:
+                    // Empty
+                    if (destinationCard.Tag != null)
+                    {
+                        if (destinationCard.Tag.ToString() == "Table" && sourceCard.card.Rank == CardRank.King)
+                        {
+                            MoveCardsFromTableToTable(sourceCard, destinationCard, true);
+                        }
+                    }
+                    else
+                    {
+                        switch (destinationCard.card.Placement)
+                        {
+                            case CardPlacement.Drop:
+                                break;
+                            case CardPlacement.Stack:
+                                break;
+                            case CardPlacement.Table:
+                                if (destinationCard.card.Type != Tables[destinationCard.columnNumber].Last().card.Type)
+                                {
+                                    return;
+                                }
+                                if (sourceCard.card.PutField(destinationCard.card))
+                                {
+                                    MoveCardsFromTableToTable(sourceCard, destinationCard);
+                                }
+                                break;
+                            case CardPlacement.Unused:
+                                break;
+                        }
+                    }
+                    break;
+                case CardPlacement.Unused:
+                    break;
+            }
+        }
+
+        private void MoveCardsFromTableToTable(CardMapping cardFrom, CardMapping cardTo, bool destinationIsEmpty = false)
+        {
+            int i = Tables[cardFrom.columnNumber].Count - 1;
+            for (; i >= 0; i--)
+            {
+                if (Tables[cardFrom.columnNumber][i].card.Type == cardFrom.card.Type)
+                {
+                    break;
+                }
+            }
+
+            int oldColumnNumber = cardFrom.columnNumber;
+            if (destinationIsEmpty)
+            {
+                CardMapping cardM = Shift(Tables[oldColumnNumber], cardTo.columnNumber, i);
+                LocateCard(cardM, cardMappingTables[cardTo.columnNumber]);
+                cardM.columnNumber = cardTo.columnNumber;
+            }
+
+            while (i < Tables[oldColumnNumber].Count)
+            {
+                CardMapping cardM = Shift(Tables[oldColumnNumber], Tables[cardTo.columnNumber], true, i);
+                LocateCard(cardM, cardMappingTables[cardTo.columnNumber], Tables[cardTo.columnNumber].Count - 1);
+                cardM.columnNumber = cardTo.columnNumber;
+            }
+
+            if (Tables[oldColumnNumber].Count != 0)
+            {
+                OpenCard(Tables[oldColumnNumber].Last());
+            }
+        }
+
+        private CardMapping Shift(List<CardMapping> From, List<CardMapping> To, bool OpenOrClose, int IndexFirstReplacedCard)
+        {
+            CardMapping cardM = From[IndexFirstReplacedCard];
+            cardM.columnNumber = To.Last().columnNumber;
+            From.Remove(From[IndexFirstReplacedCard]);
+            if (OpenOrClose)
+            {
+                OpenCard(cardM);
+            }
+            else
+            {
+                CloseCard(cardM);
+            }
+            To.Add(cardM);
+            return cardM;
+        }
+
+        private CardMapping Shift(List<CardMapping> From, int columnNumber, int IndexFirstReplacedCard)
+        {
+            CardMapping cardM = From[IndexFirstReplacedCard];
+            cardM.columnNumber = columnNumber;
+            From.Remove(From[IndexFirstReplacedCard]);
+            OpenCard(cardM);
+            Tables[columnNumber].Add(cardM);
+            return cardM;
         }
 
     }
