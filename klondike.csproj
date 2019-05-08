@@ -45,12 +45,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Card.cs" />
+    <Compile Include="CardEnums.cs" />
     <Compile Include="CardMapping.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="CardMapping.Designer.cs">
       <DependentUpon>CardMapping.cs</DependentUpon>
     </Compile>
+    <Compile Include="Deck.cs" />
     <Compile Include="KlondikeGame.cs">
       <SubType>Form</SubType>
     </Compile>

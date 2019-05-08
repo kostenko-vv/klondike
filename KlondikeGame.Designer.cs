@@ -40,7 +40,7 @@
             this.cardMappingTable2 = new klondike.CardMapping();
             this.cardMappingTable1 = new klondike.CardMapping();
             this.cardMappingUnused = new klondike.CardMapping();
-            this.cardMappingStock = new klondike.CardMapping();
+            this.cardMappingStack = new klondike.CardMapping();
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingSpades)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingClubs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingDiamonds)).BeginInit();
@@ -53,7 +53,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingTable2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingTable1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingUnused)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.cardMappingStock)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.cardMappingStack)).BeginInit();
             this.SuspendLayout();
             // 
             // cardMappingSpades
@@ -216,18 +216,18 @@
             this.cardMappingUnused.TabStop = false;
             this.cardMappingUnused.Tag = "Unused";
             // 
-            // cardMappingStock
+            // cardMappingStack
             // 
-            this.cardMappingStock.AllowDrop = true;
-            this.cardMappingStock.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.cardMappingStock.columnNumber = 0;
-            this.cardMappingStock.Location = new System.Drawing.Point(13, 13);
-            this.cardMappingStock.Name = "cardMappingStock";
-            this.cardMappingStock.Size = new System.Drawing.Size(110, 140);
-            this.cardMappingStock.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.cardMappingStock.TabIndex = 0;
-            this.cardMappingStock.TabStop = false;
-            this.cardMappingStock.Tag = "Stock";
+            this.cardMappingStack.AllowDrop = true;
+            this.cardMappingStack.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.cardMappingStack.columnNumber = 0;
+            this.cardMappingStack.Location = new System.Drawing.Point(13, 13);
+            this.cardMappingStack.Name = "cardMappingStack";
+            this.cardMappingStack.Size = new System.Drawing.Size(110, 140);
+            this.cardMappingStack.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.cardMappingStack.TabIndex = 0;
+            this.cardMappingStack.TabStop = false;
+            this.cardMappingStack.Tag = "Stack";
             // 
             // KlondikeGame
             // 
@@ -247,9 +247,10 @@
             this.Controls.Add(this.cardMappingTable2);
             this.Controls.Add(this.cardMappingTable1);
             this.Controls.Add(this.cardMappingUnused);
-            this.Controls.Add(this.cardMappingStock);
+            this.Controls.Add(this.cardMappingStack);
             this.Name = "KlondikeGame";
             this.Text = "klondike";
+            this.Load += new System.EventHandler(this.Klondike_Load);
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingSpades)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingClubs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingDiamonds)).EndInit();
@@ -262,14 +263,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingTable2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingTable1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingUnused)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.cardMappingStock)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.cardMappingStack)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private CardMapping cardMappingStock;
+        private CardMapping cardMappingStack;
         private CardMapping cardMappingUnused;
         private CardMapping cardMappingTable1;
         private CardMapping cardMappingTable2;

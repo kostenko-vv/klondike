@@ -12,7 +12,16 @@ namespace klondike
 {
     public partial class CardMapping : PictureBox
     {
+        private Card _card;
         private int _columnNumber = -1;
+
+        public Card card
+        {
+            get
+            {
+                return _card;
+            }
+        }
 
         public int columnNumber
         {
@@ -24,6 +33,19 @@ namespace klondike
             InitializeComponent();
             BorderStyle = BorderStyle.FixedSingle;
             AllowDrop = true;
+        }
+
+        public CardMapping(CardType type, CardPlacement cardPlacement)
+        {
+            InitializeComponent();
+
+            _card = new Card((int)type);
+            _card.Placement = cardPlacement;
+
+            // FOR DEBUG
+            //object o = Properties.Resources.ResourceManager.GetObject(_card.Type.ToString());
+            object o = Properties.Resources.Back;
+            Image = (Bitmap)o;
         }
 
         protected override void OnPaint(PaintEventArgs pe)
