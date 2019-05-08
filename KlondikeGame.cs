@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace klondike
 {
-    public partial class Form1 : Form
+    public partial class KlondikeGame : Form
     {
-        public Form1()
+        public KlondikeGame()
         {
             InitializeComponent();
         }
