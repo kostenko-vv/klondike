@@ -157,20 +157,23 @@ namespace klondike
             }
         }
 
-        private void cardMapping_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetData(typeof(CardMapping)) != null)
-                e.Effect = DragDropEffects.Move;
-            else
-                e.Effect = DragDropEffects.None;
-        }
+        #region Обработчики событий по перемещению карт
+
         private void cardMapping_MouseDown(object sender, MouseEventArgs e)
         {
             CardMapping cardM = ((CardMapping)sender);
 
+            // Костыль для возможности протмотра стека заново
+            if (cardM.Tag != null)
+            {
+                MoveCardsFromUnusedToStack();
+                return;
+            }
+
             switch (cardM.card.Placement)
             {
                 case CardPlacement.Stack:
+                    MoveCardFromStackToUnused();
                     break;
                 default:
                     if (cardM.card.isOpened())
@@ -189,8 +192,10 @@ namespace klondike
             {
                 case CardPlacement.Stack:
                     break;
+
                 case CardPlacement.Drop:
                     break;
+
                 case CardPlacement.Table:
                     // Empty
                     if (destinationCard.Tag != null)
@@ -223,10 +228,55 @@ namespace klondike
                         }
                     }
                     break;
+
                 case CardPlacement.Unused:
+                    // Empty
+                    if (destinationCard.Tag != null)
+                    {
+                        if (destinationCard.Tag.ToString() == "Table" && sourceCard.card.Rank == CardRank.King)
+                        {
+                            MoveCardFromUnusedToTable(destinationCard.columnNumber, true);
+                        }
+                    }
+                    else
+                    {
+                        switch (destinationCard.card.Placement)
+                        {
+                            case CardPlacement.Stack:
+                                break;
+
+                            case CardPlacement.Drop:
+                                break;
+
+                            case CardPlacement.Table:
+                                if (destinationCard.card.Type != Tables[destinationCard.columnNumber].Last().card.Type)
+                                {
+                                    return;
+                                }
+                                if (sourceCard.card.PutField(destinationCard.card))
+                                {
+                                    MoveCardFromUnusedToTable(destinationCard.columnNumber);
+                                }
+                                break;
+
+                            case CardPlacement.Unused:
+                                break;
+                        }
+                    }
                     break;
             }
         }
+        private void cardMapping_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetData(typeof(CardMapping)) != null)
+                e.Effect = DragDropEffects.Move;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        #endregion
+
+        #region Обработчики перемещения карт по сцене
 
         private void MoveCardsFromTableToTable(CardMapping cardFrom, CardMapping cardTo, bool destinationIsEmpty = false)
         {
@@ -260,6 +310,43 @@ namespace klondike
             }
         }
 
+        private void MoveCardsFromUnusedToStack()
+        {
+            while (Unused.Count != 0)
+            {
+                CardMapping cardG = Shift(Unused, Stack, false);
+                cardG.card.Placement = CardPlacement.Stack;
+                LocateCard(cardG, cardMappingStack);
+            }
+        }
+
+        private void MoveCardFromStackToUnused()
+        {
+            CardMapping cardM = Shift(Stack, Unused, true);
+            cardM.card.Placement = CardPlacement.Unused;
+            LocateCard(cardM, cardMappingUnused);
+        }
+
+        private void MoveCardFromUnusedToTable(int columnNumber, bool destinationIsEmpty = false)
+        {
+            CardMapping cardM;
+            if (destinationIsEmpty)
+            {
+                cardM = Shift(Unused, columnNumber, Unused.Count - 1);
+            }
+            else
+            {
+                cardM = Shift(Unused, Tables[columnNumber], true);
+            }
+            cardM.card.Placement = CardPlacement.Table;
+            cardM.columnNumber = columnNumber;
+            LocateCard(cardM, cardMappingTables[columnNumber], Tables[columnNumber].Count - 1);
+        }
+
+        #endregion
+
+        #region Обработчики сдвига карт
+
         private CardMapping Shift(List<CardMapping> From, List<CardMapping> To, bool OpenOrClose, int IndexFirstReplacedCard)
         {
             CardMapping cardM = From[IndexFirstReplacedCard];
@@ -286,6 +373,25 @@ namespace klondike
             Tables[columnNumber].Add(cardM);
             return cardM;
         }
+
+        private CardMapping Shift(List<CardMapping> From, List<CardMapping> To, bool OpenOrClose)
+        {
+            CardMapping cardM = From.Last();
+            From.Remove(From.Last());
+            if (OpenOrClose)
+            {
+                OpenCard(cardM);
+            }
+            else
+            {
+                CloseCard(cardM);
+            }
+
+            To.Add(cardM);
+            return cardM;
+        }
+
+        #endregion
 
     }
 }
