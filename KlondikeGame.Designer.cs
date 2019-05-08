@@ -68,7 +68,7 @@
             this.cardMappingSpades.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.cardMappingSpades.TabIndex = 12;
             this.cardMappingSpades.TabStop = false;
-            this.cardMappingSpades.Tag = "Stack";
+            this.cardMappingSpades.Tag = "Drop";
             // 
             // cardMappingClubs
             // 
@@ -82,7 +82,7 @@
             this.cardMappingClubs.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.cardMappingClubs.TabIndex = 11;
             this.cardMappingClubs.TabStop = false;
-            this.cardMappingClubs.Tag = "Stack";
+            this.cardMappingClubs.Tag = "Drop";
             // 
             // cardMappingDiamonds
             // 
@@ -96,7 +96,7 @@
             this.cardMappingDiamonds.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.cardMappingDiamonds.TabIndex = 10;
             this.cardMappingDiamonds.TabStop = false;
-            this.cardMappingDiamonds.Tag = "Stack";
+            this.cardMappingDiamonds.Tag = "Drop";
             // 
             // cardMappingHearts
             // 
@@ -110,7 +110,7 @@
             this.cardMappingHearts.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.cardMappingHearts.TabIndex = 9;
             this.cardMappingHearts.TabStop = false;
-            this.cardMappingHearts.Tag = "Stack";
+            this.cardMappingHearts.Tag = "Drop";
             // 
             // cardMappingTable7
             // 
@@ -227,7 +227,7 @@
             this.cardMappingStack.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.cardMappingStack.TabIndex = 0;
             this.cardMappingStack.TabStop = false;
-            this.cardMappingStack.Tag = "Stack";
+            this.cardMappingStack.Tag = "Drop";
             // 
             // KlondikeGame
             // 

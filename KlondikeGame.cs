@@ -149,17 +149,17 @@ namespace klondike
         private void AttachDragEventsToCardMapping(CardMapping cardMapping, bool withMouseEvents = true)
         {
             cardMapping.AllowDrop = true;
-            cardMapping.DragEnter += new DragEventHandler(cardMapping_DragEnter);
-            cardMapping.DragDrop += new DragEventHandler(cardMapping_DragDrop);
+            cardMapping.DragEnter += new DragEventHandler(CardMapping_DragEnter);
+            cardMapping.DragDrop += new DragEventHandler(CardMapping_DragDrop);
             if (withMouseEvents)
             {
-                cardMapping.MouseDown += new MouseEventHandler(cardMapping_MouseDown);
+                cardMapping.MouseDown += new MouseEventHandler(CardMapping_MouseDown);
             }
         }
 
         #region Обработчики событий по перемещению карт
 
-        private void cardMapping_MouseDown(object sender, MouseEventArgs e)
+        private void CardMapping_MouseDown(object sender, MouseEventArgs e)
         {
             CardMapping cardM = ((CardMapping)sender);
 
@@ -183,7 +183,8 @@ namespace klondike
                     break;
             }
         }
-        private void cardMapping_DragDrop(object sender, DragEventArgs e)
+
+        private void CardMapping_DragDrop(object sender, DragEventArgs e)
         {
             CardMapping destinationCard = (CardMapping)sender;
             CardMapping sourceCard = (CardMapping)e.Data.GetData(typeof(CardMapping));
@@ -194,6 +195,38 @@ namespace klondike
                     break;
 
                 case CardPlacement.Drop:
+                    if (destinationCard.Tag != null)
+                    {
+                        if (destinationCard.Tag.ToString() == "Table" && sourceCard.card.Rank == CardRank.King)
+                        {
+                            MoveCardsFromDropToTable(sourceCard, destinationCard);
+                        }
+                    }
+                    else
+                    {
+                        switch (destinationCard.card.Placement)
+                        {
+                            case CardPlacement.Drop:
+                                break;
+
+                            case CardPlacement.Stack:
+                                break;
+
+                            case CardPlacement.Table:
+                                if (destinationCard.card.Type != Tables[destinationCard.columnNumber].Last().card.Type)
+                                {
+                                    return;
+                                }
+                                if (sourceCard.card.PutField(destinationCard.card))
+                                {
+                                    MoveCardsFromDropToTable(sourceCard, destinationCard);
+                                }
+                                break;
+
+                            case CardPlacement.Unused:
+                                break;
+                        }
+                    }
                     break;
 
                 case CardPlacement.Table:
@@ -204,12 +237,24 @@ namespace klondike
                         {
                             MoveCardsFromTableToTable(sourceCard, destinationCard, true);
                         }
+                        if (destinationCard.Tag.ToString() == "Drop" && sourceCard.card.Rank == CardRank.Ace)
+                        {
+                            MoveCardFromTableToDrop(sourceCard);
+                        }
                     }
                     else
                     {
                         switch (destinationCard.card.Placement)
                         {
                             case CardPlacement.Drop:
+                                if (sourceCard.card.Type != Tables[sourceCard.columnNumber].Last().card.Type)
+                                {
+                                    return;
+                                }
+                                if (sourceCard.card.PutDrop(destinationCard.card))
+                                {
+                                    MoveCardFromTableToDrop(sourceCard);
+                                }
                                 break;
                             case CardPlacement.Stack:
                                 break;
@@ -237,6 +282,10 @@ namespace klondike
                         {
                             MoveCardFromUnusedToTable(destinationCard.columnNumber, true);
                         }
+                        if (destinationCard.Tag.ToString() == "Drop" && sourceCard.card.Rank == CardRank.Ace)
+                        {
+                            MoveCardFromUnusedToDrop(sourceCard);
+                        }
                     }
                     else
                     {
@@ -246,6 +295,10 @@ namespace klondike
                                 break;
 
                             case CardPlacement.Drop:
+                                if (sourceCard.card.PutDrop(destinationCard.card))
+                                {
+                                    MoveCardFromUnusedToDrop(sourceCard);
+                                }
                                 break;
 
                             case CardPlacement.Table:
@@ -266,7 +319,8 @@ namespace klondike
                     break;
             }
         }
-        private void cardMapping_DragEnter(object sender, DragEventArgs e)
+
+        private void CardMapping_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetData(typeof(CardMapping)) != null)
                 e.Effect = DragDropEffects.Move;
@@ -309,15 +363,39 @@ namespace klondike
                 OpenCard(Tables[oldColumnNumber].Last());
             }
         }
-
-        private void MoveCardsFromUnusedToStack()
+        private void MoveCardFromTableToDrop(CardMapping sourceCard)
         {
-            while (Unused.Count != 0)
+            CardMapping CardM;
+            switch (sourceCard.card.Suite)
             {
-                CardMapping cardG = Shift(Unused, Stack, false);
-                cardG.card.Placement = CardPlacement.Stack;
-                LocateCard(cardG, cardMappingStack);
+                case CardSuite.Hearts:
+                    CardM = Shift(Tables[sourceCard.columnNumber], Hearts, true);
+                    LocateCard(CardM, cardMappingHearts);
+                    break;
+                case CardSuite.Diamonds:
+                    CardM = Shift(Tables[sourceCard.columnNumber], Diamonds, true);
+                    LocateCard(CardM, cardMappingDiamonds);
+                    break;
+                case CardSuite.Clubs:
+                    CardM = Shift(Tables[sourceCard.columnNumber], Clubs, true);
+                    LocateCard(CardM, cardMappingClubs);
+                    break;
+                case CardSuite.Spades:
+                    CardM = Shift(Tables[sourceCard.columnNumber], Spades, true);
+                    LocateCard(CardM, cardMappingSpades);
+                    break;
+                default:
+                    CardM = new CardMapping();
+                    break;
             }
+            CardM.card.Placement = CardPlacement.Drop;
+
+            if (Tables[CardM.columnNumber].Count != 0)
+            {
+                OpenCard(Tables[CardM.columnNumber].Last());
+            }
+
+            CardM.columnNumber = -1;
         }
 
         private void MoveCardFromStackToUnused()
@@ -327,6 +405,15 @@ namespace klondike
             LocateCard(cardM, cardMappingUnused);
         }
 
+        private void MoveCardsFromUnusedToStack()
+        {
+            while (Unused.Count != 0)
+            {
+                CardMapping CardM = Shift(Unused, Stack, false);
+                CardM.card.Placement = CardPlacement.Stack;
+                LocateCard(CardM, cardMappingStack);
+            }
+        }
         private void MoveCardFromUnusedToTable(int columnNumber, bool destinationIsEmpty = false)
         {
             CardMapping cardM;
@@ -341,6 +428,63 @@ namespace klondike
             cardM.card.Placement = CardPlacement.Table;
             cardM.columnNumber = columnNumber;
             LocateCard(cardM, cardMappingTables[columnNumber], Tables[columnNumber].Count - 1);
+        }
+        private void MoveCardFromUnusedToDrop(CardMapping sourceCard)
+        {
+            CardMapping CardM;
+            switch (sourceCard.card.Suite)
+            {
+                case CardSuite.Hearts:
+                    CardM = Shift(Unused, Hearts, true);
+                    LocateCard(CardM, cardMappingHearts);
+                    break;
+                case CardSuite.Diamonds:
+                    CardM = Shift(Unused, Diamonds, true);
+                    LocateCard(CardM, cardMappingDiamonds);
+                    break;
+                case CardSuite.Clubs:
+                    CardM = Shift(Unused, Clubs, true);
+                    LocateCard(CardM, cardMappingClubs);
+                    break;
+                case CardSuite.Spades:
+                    CardM = Shift(Unused, Spades, true);
+                    LocateCard(CardM, cardMappingSpades);
+                    break;
+                default:
+                    CardM = new CardMapping();
+                    break;
+            }
+            CardM.card.Placement = CardPlacement.Drop;
+            CardM.columnNumber = -1;
+        }
+
+        private void MoveCardsFromDropToTable(CardMapping sourceCard, CardMapping destinationCard)
+        {
+            CardMapping cardM;
+            switch (sourceCard.card.Suite)
+            {
+                case CardSuite.Hearts:
+                    cardM = Shift(Hearts, Tables[destinationCard.columnNumber], true);
+                    LocateCard(cardM, cardMappingTables[destinationCard.columnNumber], Tables[destinationCard.columnNumber].Count - 1);
+                    break;
+                case CardSuite.Diamonds:
+                    cardM = Shift(Diamonds, Tables[destinationCard.columnNumber], true);
+                    LocateCard(cardM, cardMappingTables[destinationCard.columnNumber], Tables[destinationCard.columnNumber].Count - 1);
+                    break;
+                case CardSuite.Clubs:
+                    cardM = Shift(Clubs, Tables[destinationCard.columnNumber], true);
+                    LocateCard(cardM, cardMappingTables[destinationCard.columnNumber], Tables[destinationCard.columnNumber].Count - 1);
+                    break;
+                case CardSuite.Spades:
+                    cardM = Shift(Spades, Tables[destinationCard.columnNumber], true);
+                    LocateCard(cardM, cardMappingTables[destinationCard.columnNumber], Tables[destinationCard.columnNumber].Count - 1);
+                    break;
+                default:
+                    cardM = new CardMapping();
+                    break;
+            }
+            cardM.card.Placement = CardPlacement.Table;
+            cardM.columnNumber = destinationCard.columnNumber;
         }
 
         #endregion
