@@ -134,6 +134,29 @@ namespace klondike
             sourceCard.BringToFront();
         }
 
+        private void FinishGame()
+        {
+            int fullStackDropCount = 13;
+            if (Hearts.Count != fullStackDropCount)
+            {
+                return;
+            }
+            if (Diamonds.Count != fullStackDropCount)
+            {
+                return;
+            }
+            if (Clubs.Count != fullStackDropCount)
+            {
+                return;
+            }
+            if (Spades.Count != fullStackDropCount)
+            {
+                return;
+            }
+            MessageBox.Show("YOU WIN!");
+            Application.Exit();
+        }
+
         private void OpenCard(CardMapping cardMapping)
         {
             cardMapping.card.OpenCard();
@@ -240,6 +263,7 @@ namespace klondike
                         if (destinationCard.Tag.ToString() == "Drop" && sourceCard.card.Rank == CardRank.Ace)
                         {
                             MoveCardFromTableToDrop(sourceCard);
+                            FinishGame();
                         }
                     }
                     else
@@ -253,6 +277,7 @@ namespace klondike
                                 }
                                 if (sourceCard.card.PutDrop(destinationCard.card))
                                 {
+                                    FinishGame();
                                     MoveCardFromTableToDrop(sourceCard);
                                 }
                                 break;
