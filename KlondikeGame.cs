@@ -154,7 +154,6 @@ namespace klondike
                 return;
             }
             MessageBox.Show("YOU WIN!");
-            Application.Exit();
         }
 
         private void OpenCard(CardMapping cardMapping)
