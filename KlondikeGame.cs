@@ -81,11 +81,22 @@ namespace klondike
         private void InitMainMenu()
         {
             menuItemRules.Click += new System.EventHandler(this.menuItemRules_Click);
+            menuItemRestart.Click += new System.EventHandler(this.menuItemRestart_Click);
         }
 
         private void menuItemRules_Click(object sender, System.EventArgs e)
         {
-            MessageBox.Show(rulesDescription);
+            MessageBox.Show(rulesDescription, "Правила игры");
+        }
+
+        private void menuItemRestart_Click(object sender, System.EventArgs e)
+        {
+
+            DialogResult dialogResult = MessageBox.Show("Перезапусстить игру?", "Перезапуск", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+            {
+                Application.Restart();
+            }
         }
 
         private void Klondike_Load(object sender, EventArgs e)
