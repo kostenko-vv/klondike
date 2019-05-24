@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
+            this.menuItemRestart = new System.Windows.Forms.MenuItem();
+            this.menuItemRules = new System.Windows.Forms.MenuItem();
             this.cardMappingSpades = new klondike.CardMapping();
             this.cardMappingClubs = new klondike.CardMapping();
             this.cardMappingDiamonds = new klondike.CardMapping();
@@ -43,8 +45,6 @@
             this.cardMappingTable1 = new klondike.CardMapping();
             this.cardMappingUnused = new klondike.CardMapping();
             this.cardMappingStack = new klondike.CardMapping();
-            this.menuItemRestart = new System.Windows.Forms.MenuItem();
-            this.menuItemRules = new System.Windows.Forms.MenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingSpades)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingClubs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingDiamonds)).BeginInit();
@@ -65,6 +65,17 @@
             this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItemRestart,
             this.menuItemRules});
+            // 
+            // menuItemRestart
+            // 
+            this.menuItemRestart.Index = 0;
+            this.menuItemRestart.Shortcut = System.Windows.Forms.Shortcut.CtrlR;
+            this.menuItemRestart.Text = "Перезапуск (Ctrl + R)";
+            // 
+            // menuItemRules
+            // 
+            this.menuItemRules.Index = 1;
+            this.menuItemRules.Text = "Правила";
             // 
             // cardMappingSpades
             // 
@@ -252,16 +263,6 @@
             this.cardMappingStack.TabStop = false;
             this.cardMappingStack.Tag = "Drop";
             // 
-            // menuItemRestart
-            // 
-            this.menuItemRestart.Index = 0;
-            this.menuItemRestart.Text = "Перезапуск";
-            // 
-            // menuItemRules
-            // 
-            this.menuItemRules.Index = 1;
-            this.menuItemRules.Text = "Правила";
-            // 
             // KlondikeGame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -281,7 +282,7 @@
             this.Controls.Add(this.cardMappingTable1);
             this.Controls.Add(this.cardMappingUnused);
             this.Controls.Add(this.cardMappingStack);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Menu = this.mainMenu1;
             this.Name = "KlondikeGame";
             this.Text = "klondike";

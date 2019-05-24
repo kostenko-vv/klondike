@@ -82,6 +82,7 @@ namespace klondike
         {
             menuItemRules.Click += new System.EventHandler(this.menuItemRules_Click);
             menuItemRestart.Click += new System.EventHandler(this.menuItemRestart_Click);
+            menuItemRestart.ShowShortcut = true;
         }
 
         private void menuItemRules_Click(object sender, System.EventArgs e)
