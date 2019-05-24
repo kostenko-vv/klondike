@@ -75,7 +75,8 @@
             // menuItemRules
             // 
             this.menuItemRules.Index = 1;
-            this.menuItemRules.Text = "Правила";
+            this.menuItemRules.Shortcut = System.Windows.Forms.Shortcut.F1;
+            this.menuItemRules.Text = "Правила (F1)";
             // 
             // cardMappingSpades
             // 
