@@ -44,7 +44,7 @@
             this.cardMappingUnused = new klondike.CardMapping();
             this.cardMappingStack = new klondike.CardMapping();
             this.menuItemRestart = new System.Windows.Forms.MenuItem();
-            this.menuItem2 = new System.Windows.Forms.MenuItem();
+            this.menuItemRules = new System.Windows.Forms.MenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingSpades)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingClubs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cardMappingDiamonds)).BeginInit();
@@ -64,7 +64,7 @@
             // 
             this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItemRestart,
-            this.menuItem2});
+            this.menuItemRules});
             // 
             // cardMappingSpades
             // 
@@ -255,13 +255,12 @@
             // menuItemRestart
             // 
             this.menuItemRestart.Index = 0;
-            this.menuItemRestart.Shortcut = System.Windows.Forms.Shortcut.F1;
             this.menuItemRestart.Text = "Перезапуск";
             // 
-            // menuItem2
+            // menuItemRules
             // 
-            this.menuItem2.Index = 1;
-            this.menuItem2.Text = "Правила";
+            this.menuItemRules.Index = 1;
+            this.menuItemRules.Text = "Правила";
             // 
             // KlondikeGame
             // 
@@ -321,7 +320,7 @@
         private CardMapping cardMappingSpades;
         private System.Windows.Forms.MainMenu mainMenu1;
         private System.Windows.Forms.MenuItem menuItemRestart;
-        private System.Windows.Forms.MenuItem menuItem2;
+        private System.Windows.Forms.MenuItem menuItemRules;
     }
 }
 
